@@ -5,20 +5,30 @@ import { TodoList } from '../TodoList';
 import { TodoItem } from '../TodoItem';
 import { TodoButton } from '../TodoButton';
 
-const defaultTodos = [
-  { text: 'Tarea 1', completed: true },
-  { text: 'Tarea 2', completed: false },
-  { text: 'Tarea 3', completed: true },
-  { text: 'Tarea 4', completed: false },
-];
+// const defaultTodos = [
+//   { text: 'Tarea 1', completed: false },
+//   { text: 'Tarea 2', completed: false },
+//   { text: 'Tarea 3', completed: false },
+//   { text: 'Tarea 4', completed: false },
+// ];
 
 function App() {
-  const [todos, setTodos] = React.useState(defaultTodos);
-  const [searchValue, setSearchValue] = React.useState('');
+  const storageTodosString = localStorage.getItem("storageTodos");
+  let storageParseTodos;
 
+  if(!storageTodosString){
+    localStorage.setItem("storageTodos", JSON.stringify([]));
+    storageParseTodos = [];
+    // alert("NO EXISTE" + storageTodosString);
+  }else{
+    storageParseTodos = JSON.parse(storageTodosString);
+    // alert("SI EXISTE" + storageTodosString);
+  }
+
+  const [todos, setTodos] = React.useState(storageParseTodos);
+  const [searchValue, setSearchValue] = React.useState('');
   const completedTodos = todos.filter(todo => !!todo.completed).length;
   const totalTodos = todos.length;
-
   let searchedTodos = [];
 
   if (!searchValue.length >= 1) {
@@ -31,38 +41,37 @@ function App() {
     });
   }
 
+  const saveTodos = (newTodos) =>{
+    localStorage.setItem("storageTodos", JSON.stringify(newTodos));
+    setTodos(newTodos);
+  };
+
   const completeTodo = (text) => {
     const todoIndex = todos.findIndex(todo => todo.text === text);
     const newTodos = [...todos];
+    //newTodos[todoIndex].completed = newTodos[todoIndex].completed ? true : false;
     newTodos[todoIndex].completed = true;
-    setTodos(newTodos);
+    saveTodos(newTodos);
   };
 
   const deleteTodo = (text) => {
     const todoIndex = todos.findIndex(todo => todo.text === text);
     const newTodos = [...todos];
     newTodos.splice(todoIndex, 1);
-    setTodos(newTodos);
+    saveTodos(newTodos);
   };
   
   return (
     <>
       <TodoButton />
-
       <TodoCounter
         total={totalTodos}
         completed={completedTodos}
       />
-
-      
-      
       <TodoSearch
         searchValue={searchValue}
         setSearchValue={setSearchValue}
       />
-      
-      
-
       <TodoList>
         {searchedTodos.map(todo => (
           <TodoItem
@@ -74,10 +83,7 @@ function App() {
           />
         ))}
       </TodoList>
-
-      
     </>
   );
 }
-
 export default App;

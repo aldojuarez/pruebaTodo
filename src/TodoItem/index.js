@@ -1,7 +1,7 @@
 import React from 'react';
 import './TodoItem.css';
 import { FaCheck } from 'react-icons/fa';
-import { FaEraser } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
 
 
 function TodoItem(props) {
@@ -20,7 +20,7 @@ function TodoItem(props) {
         className="Icon Icon-delete"
         onClick={props.onDelete}
       >
-        <FaEraser/>
+        <FaTrash/>
       </span>
     </li>
   );
